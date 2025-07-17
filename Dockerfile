@@ -1,12 +1,16 @@
 FROM python:3.9.2-slim
 
-RUN apt update && apt upgrade -y
-RUN apt install git python3-pip ffmpeg -y
+# Install dependencies
+RUN apt update && apt install -y git ffmpeg && apt clean
 
-RUN mkdir /safone/
+# Create and set working directory
 WORKDIR /safone/
-COPY . /safone/
 
-RUN pip3 install -U -r requirements.txt
+# Copy project files
+COPY . .
 
-CMD python3 main.py
+# Install Python dependencies
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Run the app
+CMD ["python", "main.py"]
