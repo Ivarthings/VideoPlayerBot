@@ -1,13 +1,23 @@
 FROM debian:latest
 
-RUN apt update && apt upgrade -y
-RUN apt install git python3-pip ffmpeg -y
+# Install system packages
+RUN apt update && apt upgrade -y && \
+    apt install -y git python3 python3-pip python3-venv ffmpeg
 
+# Set up working directory
 RUN mkdir /safone/
 WORKDIR /safone/
+
+# Copy your code
 COPY . /safone/
 
-RUN pip3 install --upgrade pip
-RUN pip3 install -U -r requirements.txt
+# Create a virtual environment and activate it
+RUN python3 -m venv /venv
+ENV PATH="/venv/bin:$PATH"
 
-CMD python3 main.py
+# Install Python dependencies in the venv
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# Run your app
+CMD ["python", "main.py"]
